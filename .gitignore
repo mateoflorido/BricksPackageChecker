@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+#TeX Compiled
+*.aux
+*.synctex.gz
+*.log
+*.toc
