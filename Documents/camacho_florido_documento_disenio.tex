@@ -145,19 +145,67 @@ Se obtiene una imágen en la que se encuentran bordeadas las piezas reconocidas 
 
 \chapter{Proceso}
 
+\subsection{Preprocesamiento}
 Para el procesamiento de las piezas capturadas realizamos primero un downsample de la imagen mediante el uso de una pirámide Gaussiana (se usó pyrDown en OpenCV). Esto con el fin de reducir la resolución de la imagen a la mitad y evitar que se detecten multiples detalles no relevantes de nuestra imagen.
 
-Luego, se realiza un desenfoque gaussiano con un kernel 5x5 sobre todo la imagen para facilitar la detección de las piezas. Debido a que el algoritmo de detección de bordes es sensible a la presencia de ruido de la imagen, se debe utilizar el desenfoque gaussiano mencionado anteriormente que mejora los resultados del algoritmo de detección.
+\begin{figure}[H]
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.8\linewidth, height=5cm]{Process/fifthStage5.jpeg} 
+		\caption{Imagen Original}
+		\label{fig:subim10}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.4\linewidth, height=2.5cm]{Process/fifthStage5_pyrDown.png} 
+		\caption{Imagen Downsampled}
+		\label{fig:subim11}
+	\end{subfigure}
+	\caption{Downsample Pirámide Gaussiana}
+	\label{fig:image3}
+\end{figure}
+
+Luego, después de convertir la imagen a escala de grises (mediante cvtColor en OpenCV), se realiza un desenfoque gaussiano con un kernel 5x5 sobre todo la imagen para facilitar la detección de las piezas. Debido a que el algoritmo de detección de bordes es sensible a la presencia de ruido de la imagen, se debe utilizar el desenfoque gaussiano mencionado anteriormente que mejora los resultados del algoritmo de detección.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth, height=10cm]{Process/fifthStage5_blured.png}
+	\caption{Imagen con desenfoque gaussiano}
+\end{figure}
 
 Acorde a que las piezas tienen una forma definida y lo suficientemente diferente de otras, se binariza la imagen con el Método de Otsu para encontrar el umbral óptimo de la imagen. Con esto, podemos extraer la forma definida y realizar un reconocimiento de las diferentes propiedades que contiene cada pieza (número de lados, perímetro relativo y área relativa).
 
-Con la imagen binarizada, se extraen los contornos de la imagen. Debido a que el algoritmo entrega todos los contornos posibles, solamente nos quedamos con los contornos externos de cada pieza de LEGO. Esto con el fin de no detectar otras características que no son relevantes. Finalmente, se aproximan los contornos usando solo sun puntos extremos; es decir, si tenemos un rectángulo, este será definido por 4 puntos.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth, height=10cm]{Process/fifthStage5_threshold.png}
+	\caption{Imagen binarizada}
+\end{figure}
+
+\subsection{Posprocesamiento}
+
+Con la imagen binarizada, se extraen los contornos de la imagen. Debido a que el algoritmo entrega todos los contornos posibles, solamente se tienen en cuenta con los contornos externos de cada pieza de LEGO. Esto con el fin de no detectar otras características que no son relevantes. Finalmente, se aproximan los contornos usando solo los puntos extremos; es decir, si tenemos un rectángulo, este será definido por 4 puntos.
 
 En el tratamiento de cada contorno para detectar las piezas se evalúa si el contorno tiene un perímtero considerable. Esto se realiza para eliminar rastros de la imagen que pudieron quedar identificados. A continuación se aproximan los polígonos extraídos de los contornos con otro polígono con menos vértices esto con el fin de dejar la cantidad real de lados que contienen los contornos y dejar a un lado lados que pudieron ser identificados erróneamente. Para este método se utiliza el algoritmo Ramer-Douglas-Peucker (RDP).
 
 Ya con el polígono aproximado, se obtienen las propiedades de número de lados, perímetro relativo y área relativa. Mediante las mediciones realizadas, se clasifican todas las piezas con los parámetros establecidos.
 
 Finalmente, se escribe una imagen en la que se observan todas las piezas identificadas con su identificador único de LEGO y la palabra APPROVED o FAIL en caso de que se verificara la integridad del paquete analizado.
+
+\begin{figure}[H]
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.8\linewidth, height=5cm]{Process/FinalApproved_response.png} 
+		\caption{Paquete identificado correctamente}
+		\label{fig:subim10}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.8\linewidth, height=5cm]{Process/FinalFail_response.png} 
+		\caption{Paquete no completo}
+		\label{fig:subim11}
+	\end{subfigure}
+	\caption{Resultado de identificación de paquetes}
+	\label{fig:image3}
+\end{figure}
 
 
 
