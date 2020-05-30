@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
+#include <map>
 
 using namespace cv;
 using namespace std;
 const Point neighbors[8] = {Point(1, 0), Point(1, -1), Point(-1, -1), Point(-1, 0), Point(-1, 1), Point(0, 1),
                             Point(0, -1), Point(1, 1)};
+const
 string DetectShape(vector<Point> &shape, float cx, float cy) {
     //Check perimeter of closed Shape
     double perimeter = arcLength(shape, true);
@@ -69,7 +71,7 @@ string DetectShape(vector<Point> &shape, float cx, float cy) {
                           << " Radio: " << radio << " Area: " << area << std::endl;
                 return "H. 1x1";
             } else if (area > 7900 && area < 9000){
-                std::cout << "Se detectó como: H. 1x1 con atributos: Perimetro->" << perimeter << " Size: "
+                std::cout << "Se detectó como: H. 2x1 con atributos: Perimetro->" << perimeter << " Size: "
                           << approx.size() << " AR:" << ar << std::endl << "Centro: " << centros.x << "," << centros.y
                           << " Radio: " << radio << " Area: " << area << std::endl;
                 return "H. 2x1";
@@ -123,14 +125,28 @@ int main(int argc, char **argv) {
     std::string basename;
     getline(ss, basename, '.');
 
+    //Creating the legoSet
+    std::map<string, int> legoSet;
+    legoSet.insert(std::pair<string, int>("Flat Tile", 3));
+    legoSet.insert(std::pair<string, int>("H. 1x1", 1));
+    legoSet.insert(std::pair<string, int>("MiniFigure - Atronaut", 1));
+    legoSet.insert(std::pair<string, int>("Round 1x1", 2));
+    legoSet.insert(std::pair<string, int>("H. 2x1", 1));
+    legoSet.insert(std::pair<string, int>("P. 1x2 Stick", 1));
+    legoSet.insert(std::pair<string, int>("P. 1x4", 1));
+    legoSet.insert(std::pair<string, int>("P. 2x4", 3));
+    std::map<string, int> fFigures;
+
 
     Mat resized;
     pyrDown(image, resized, Size(image.cols / 2, image.rows / 2));
+    imwrite(basename + "_pyrDown.png", resized);
     float ratio = float(image.size().height / resized.size().height);
     Mat grayScale;
     cvtColor(image, grayScale, COLOR_BGR2GRAY);
     Mat bImage;
     GaussianBlur(grayScale, bImage, Size(5, 5), 0);
+    imwrite(basename + "_blured.png", bImage);
     threshold(bImage, bImage, 45, 255, THRESH_BINARY);
     imwrite(basename + "_threshold.png", bImage);
     vector<vector<Point>> contours;
@@ -210,11 +226,40 @@ int main(int argc, char **argv) {
                 response += " C";
             }
         }*/
+        if (fFigures.count(response)>0){
+            std::cout<<"Exíste! "<<response<<std::endl;
+            fFigures[response]++;
+            std::cout<<"Cuenta: "<<fFigures[response]<<std::endl;
+        } else {
+            std::cout<<"Creando! "<<response<<std::endl;
+            fFigures.insert(std::pair<string, int> (response,1));
+            std::cout<<"Cuenta: "<<fFigures[response]<<std::endl;
+        }
         cout << "Drawing Text\n";
         putText(image, response, Point(cx - 20, cy), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 0), 4);
         putText(image, response, Point(cx - 20, cy), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2);
         cout << "Success Drawing Text\n";
 
+    }
+    //Check if all pieces were found
+    std::map<string, int>::iterator itEspected = legoSet.begin();
+    bool notValid = false;
+    while (itEspected != legoSet.end()){
+        if (itEspected->second != fFigures[itEspected->first]){
+            std::cout<<"No concuerdan. Esperado: "<<itEspected->second<<" en: "<<itEspected->first<<std::endl;
+            std::cout<<"Recibido: "<<fFigures[itEspected->first]<<std::endl;
+            notValid = true;
+        }
+        itEspected++;
+    }
+    if(notValid){
+        std::cout<<"Fail"<<std::endl;
+        putText(image,"Fail", Point(image.size().height/4,image.size().width/4),FONT_HERSHEY_SIMPLEX, 5, Scalar(0,0,0),10);
+        putText(image,"Fail", Point(image.size().height/4,image.size().width/4),FONT_HERSHEY_SIMPLEX, 5, Scalar(43,164,232),7);
+    } else {
+        std::cout<<"Approved"<<std::endl;
+        putText(image,"Approved", Point(image.size().height/4-35,image.size().width/4+20),FONT_HERSHEY_SIMPLEX, 4, Scalar(0,0,0),12);
+        putText(image,"Approved", Point(image.size().height/4-35,image.size().width/4+20),FONT_HERSHEY_SIMPLEX, 4, Scalar(43,164,232),7);
     }
 
     //Write results
