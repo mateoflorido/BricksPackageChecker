@@ -4,8 +4,10 @@
 \usepackage[spanish]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{subcaption}
 
 \usepackage{pdfpages}
+\usepackage{float}
 %% Sets page size and margins
 \usepackage[letterpaper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 
@@ -41,7 +43,7 @@
 	\makebox[0pt][l]{\rule{1.3\textwidth}{1.5pt}}
 	\par
 	\noindent
-	\textbf{\LARGE \textsf{LEGO Package Verifier - Documento de Diseño}}
+	\textbf{\LARGE \textsf{LEGO Package Verifier - Documento Entrega Final}}
 	\vfill
 	\noindent
 	{\huge \textsf{Versión 1.0}}
@@ -55,8 +57,8 @@
 
 \maketitle
 \noindent
-Documento de Diseño\\ 
-Versión v1.0, Febrero 2020\\
+Documento Entrega Final\\ 
+Versión v2.0, Junio 2020\\
 Authors - Nicolás Camacho Plazas, Mateo Florido\\
 This entire document is licensed under GNU General Public License v3.0. Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.\\
 LEGO System A/S, DK-7190 Billund, Denmark. LEGO, the LEGO logo, the Minifigure, DUPLO, LEGENDS OF CHIMA, NINJAGO, BIONICLE, MINDSTORMS and MIXELS are trademarks and copyrights of the LEGO Group. ©2019 The LEGO Group. All rights reserved.
@@ -70,69 +72,94 @@ LEGO System A/S, DK-7190 Billund, Denmark. LEGO, the LEGO logo, the Minifigure, 
 % Solucion a proponer, Alcance, Requerimientos técnicos y tecnologicos.
 % ______________________
 
-\chapter{Definición del Problema} 
-En control de calidad y el monitoreo de los procesos de producción es un aspecto de gran importancia en cualquier empresa de manufactura y ensamble.
-
-Específicamente, empresas que fabrican juguetes de bloques de construcción deben llevar un control del inventario de piezas contenidas en cada paquete o set. Por lo tanto, pueden derivarse errores en los que las piezas de dichos paquetes no se encuentren completas o se añadan algunas de más.  Por ende, se debe encontrar una forma de poder llevar un control de las piezas mediante el análisis de la línea de producción previa al empaque. 
-
-\section{Solución a Proponer}
-
-En primer lugar, el escenario ideal debe ser una banda que recibe de una línea de producción todas las piezas requeridas para un set de juego. Las piezas deben de estar delimitadas en una grilla para facilitar su identificación. De esta manera, se pretende que una cámara perpendicular en la parte superior a la grilla capture la totalidad del escenario y pueda determinar si las piezas se encuentran completas o no; identificando de esta manera, si el set se encuentra acorde a los requerimientos específicos de cada uno.
-
-\section{Alcance}
+\chapter{Alcance}
 El alcance de nuestro producto estará orientado a intentar reconocer las diferentes piezas de un set. Sin embargo, se ha decidido dividir los alcances en diferentes categorías que se presentarán a continuación.
 
-\subsection{Entradas}
-Las entradas estarán dadas por un set de máximo 5 piezas diferentes. 
-\subsubsection{Entorno de Captura}
-Estas piezas en un inicio entraran al sistema mediante un captura de imagen a la banda transportadora donde se encuentran. Dicha banda, contendrá una grilla en la que se clasificarán las diferentes piezas separadas unas de otras para facilitar el proceso de reconocimiento y clasificación.
-\subsubsection{Iluminación}
-Se debe intentar una iluminación uniforme en toda la captura para mitigar los errores debido a este fenómeno que se puedan presentar.
-\subsubsection{Piezas}
-El set debe contener una cantidad de piezas considerablemente diferentes en su forma para evitar un reconocimiento incorrecto que podría afectar el buen funcionamiento del sistema.
-\subsection{Salidas}
-\subsubsection{Confiables}
-El tratamiento de la imagen debe de arrojar que el set se encuentra en el estado óptimo y que puede ser aceptado.
-\subsubsection{No Confiables}
-El proceso aplicado sobre toda la imagen no permite dar un veredicto final que permita determinar si el set se encuentra completo o incompleto.
-\subsubsection{Rechazadas}
-El sistema debe determinar la falta de alguna de las piezas del set. Sin embargo, en caso de que se encuentren piezas de más, este también debe ser rechazado.
+\section{Entradas}
+Las entradas estarán dadas por un set de máximo 8 tipos de piezas sin importar su color. Las piezas que pueden ser reconocidas son:
+
+\begin{figure}[H]
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.9\linewidth, height=5cm]{Bricks/plate2x4.jpeg} 
+		\caption{Plate 2x4}
+		\label{fig:subim1}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.9\linewidth, height=5cm]{Bricks/plate1x4.jpeg}
+		\caption{Plate 1x4}
+		\label{fig:subim2}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.4\linewidth, height=3cm]{Bricks/flattile1x2.jpeg}
+		\caption{Flat Tile 1x2}
+		\label{fig:subim3}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\includegraphics[width=0.9\linewidth, height=5cm]{Bricks/stick1x2.jpeg}
+		\caption{Plate 1x2 W. Stick 3.18}
+		\label{fig:subim3}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.4\linewidth, height=3cm]{Bricks/1x1up.jpeg}
+		\caption{Plate 1x1 W. Up Right Holder}
+		\label{fig:subim3}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.4\linewidth, height=3cm]{Bricks/1x2holder.jpeg}
+		\caption{Plate 1x2 W. Holder Vertical}
+		\label{fig:subim3}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.4\linewidth, height=3cm]{Bricks/round1x1.jpeg}
+		\caption{Round Plate 1x1}
+		\label{fig:subim3}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=0.4\linewidth, height=4cm]{Bricks/astronaut.jpg}
+		\caption{miniFigure Astronaut Series 1}
+		\label{fig:subim3}
+	\end{subfigure}
+	\caption{Piezas reconocibles}
+	\label{fig:image2}
+\end{figure}
+
+\subsection{Entorno de Captura}
+Estas piezas en un inicio entrarán al sistema mediante una captura de imagen a la banda transportadora donde se encuentran. 
+\subsection{Iluminación}
+Debe tener una iluminación uniforme en toda la captura para mitigar los errores. Se deben capturar las imágenes sin sombras o brillos que puedan entorpecer el reconocimiento de las piezas.
+\subsection{Cámara}
+La cámara debe de ubicarse a una altura constante que permita evitar el cambio del tamaño relativo de las piezas capturadas.
+\subsection{Fondo}
+Para realizar de forma más precisa el reconocimiento de las piezas, se debe utilizar un fondo uniforme de color negro de preferencia textura mate para evitar la refelexión de la luz.
+\section{Salida}
+Se obtiene una imágen en la que se encuentran bordeadas las piezas reconocidas con un contorno verde, además del número de pieza oficial de LEGO.
 
 % ______________________
-% Cap. Herramientas y Servicios
+% Cap. Proceso
 % ______________________
 
-\chapter{Herramientas y Servicios}
+\chapter{Proceso}
 
-\section{Requerimientos Técnicos}
-Se utilizará el lenguaje C++ en el estándar C++17. Además se utilizará la biblioteca de visión artificial en tiempo real OpenCV.
+Para el procesamiento de las piezas capturadas realizamos primero un downsample de la imagen mediante el uso de una pirámide Gaussiana (se usó pyrDown en OpenCV). Esto con el fin de reducir la resolución de la imagen a la mitad y evitar que se detecten multiples detalles no relevantes de nuestra imagen.
 
-Adicionalmente, se incluirán conceptos como integración continua y \emph{testing} que permiten evaluar el progreso y estabilidad del proyecto.
+Luego, se realiza un desenfoque gaussiano con un kernel 5x5 sobre todo la imagen para facilitar la detección de las piezas. Debido a que el algoritmo de detección de bordes es sensible a la presencia de ruido de la imagen, se debe utilizar el desenfoque gaussiano mencionado anteriormente que mejora los resultados del algoritmo de detección.
 
-\section{Requerimientos Tecnológicos}
-En general, se requieren las siguientes utilidades y librerías de software:
-\begin{itemize}
+Acorde a que las piezas tienen una forma definida y lo suficientemente diferente de otras, se binariza la imagen con el Método de Otsu para encontrar el umbral óptimo de la imagen. Con esto, podemos extraer la forma definida y realizar un reconocimiento de las diferentes propiedades que contiene cada pieza (número de lados, perímetro relativo y área relativa).
 
-	\item g++ (Arch 9.2.0) 9.2.0
+Con la imagen binarizada, se extraen los contornos de la imagen. Debido a que el algoritmo entrega todos los contornos posibles, solamente nos quedamos con los contornos externos de cada pieza de LEGO. Esto con el fin de no detectar otras características que no son relevantes. Finalmente, se aproximan los contornos usando solo sun puntos extremos; es decir, si tenemos un rectángulo, este será definido por 4 puntos.
 
-	\item GNU gdb gbd-common-8.3-1
+En el tratamiento de cada contorno para detectar las piezas se evalúa si el contorno tiene un perímtero considerable. Esto se realiza para eliminar rastros de la imagen que pudieron quedar identificados. A continuación se aproximan los polígonos extraídos de los contornos con otro polígono con menos vértices esto con el fin de dejar la cantidad real de lados que contienen los contornos y dejar a un lado lados que pudieron ser identificados erróneamente. Para este método se utiliza el algoritmo Ramer-Douglas-Peucker (RDP).
 
-	\item Clang 9.0.1-1
+Ya con el polígono aproximado, se obtienen las propiedades de número de lados, perímetro relativo y área relativa. Mediante las mediciones realizadas, se clasifican todas las piezas con los parámetros establecidos.
 
-	\item make 4.3
+Finalmente, se escribe una imagen en la que se observan todas las piezas identificadas con su identificador único de LEGO y la palabra APPROVED o FAIL en caso de que se verificara la integridad del paquete analizado.
 
-	\item CMake 3.16.4
 
-\end{itemize}
-\section{Integración Continua (CI) y Manejo de Versiones}
-Se deben utilizar manejo de versiones e integración continua que permitan la verificación de calidad de los commits.
-
-\begin{itemize}
-	 \item Travis CI Ubuntu 16.04 Xenial Xerus LTS, 18.04 Bionic Beaver LTS
-	 \item git 2.23.0
-	 \item GitKraken 6.5.1
-	 \item GoogleTest
-\end{itemize}
 
 %\todo[inline, color=green!40]{This is an inline comment.}
 
