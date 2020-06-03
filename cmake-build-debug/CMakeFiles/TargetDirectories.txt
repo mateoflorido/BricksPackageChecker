@@ -1,3 +1,0 @@
-/home/nicoboi/Escritorio/Visión Artificial/LEGO-Package-Checker/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/nicoboi/Escritorio/Visión Artificial/LEGO-Package-Checker/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/nicoboi/Escritorio/Visión Artificial/LEGO-Package-Checker/cmake-build-debug/CMakeFiles/lego.dir
